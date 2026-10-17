@@ -1,0 +1,27 @@
+{
+	"geode": "4.1.0",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074"
+	},
+	"id": "antigravity.ai_level_loader",
+	"name": "AI Level Loader",
+	"version": "v1.0.0",
+	"developer": "Developer",
+	"description": "Load and preview AI-generated Geometry Dash levels from JSON with full trigger support (Move, Color, Pulse, Alpha, Rotate, Shake, Toggle, Spawn).",
+	"settings": {
+		"json-path": {
+			"name": "JSON File Path",
+			"description": "Path to the level JSON file to load on your device.",
+			"type": "string",
+			"default": "/sdcard/Download/ai_level.json"
+		},
+		"paste-to-clipboard": {
+			"name": "Also Copy to Clipboard",
+			"description": "Automatically copies the generated GD objects to clipboard so you can paste anywhere in the editor.",
+			"type": "bool",
+			"default": true
+		}
+	}
+}

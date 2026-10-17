@@ -1,0 +1,32 @@
+{
+  "name": "All Triggers Showcase",
+  "author": "Antigravity AI",
+  "description": "Comprehensive demonstration of all supported triggers in JSON",
+  "speed": "1x",
+  "bg_color": [20, 20, 30],
+  "ground_color": [30, 30, 45],
+  "objects": [
+    { "type": "block", "x": 5, "y": 1, "groups": [1] },
+    { "type": "trigger_move", "x": 2, "y": 1, "target_group": 1, "move_x_blocks": 0, "move_y_blocks": 3, "duration": 0.8, "easing": "ease_in_out" },
+
+    { "type": "trigger_color", "x": 6, "y": 1, "channel": "bg", "r": 200, "g": 50, "b": 80, "duration": 1.0, "blending": true },
+
+    { "type": "block", "x": 10, "y": 1, "groups": [2] },
+    { "type": "trigger_pulse", "x": 8, "y": 1, "target_group": 2, "r": 255, "g": 255, "b": 0, "fade_in": 0.1, "hold": 0.3, "fade_out": 0.2 },
+
+    { "type": "block", "x": 15, "y": 1, "groups": [3] },
+    { "type": "trigger_alpha", "x": 12, "y": 1, "target_group": 3, "opacity": 0.25, "duration": 0.5 },
+
+    { "type": "block", "x": 19, "y": 3, "groups": [4] },
+    { "type": "block", "x": 20, "y": 3, "groups": [5] },
+    { "type": "trigger_rotate", "x": 16, "y": 1, "target_group": 4, "center_group": 5, "degrees": 360, "duration": 2.0, "easing": "none" },
+
+    { "type": "trigger_shake", "x": 22, "y": 1, "strength": 4.0, "interval": 0.02, "duration": 0.6 },
+
+    { "type": "spike", "x": 26, "y": 1, "groups": [6] },
+    { "type": "trigger_toggle", "x": 24, "y": 1, "target_group": 6, "activate": false },
+
+    { "type": "trigger_spawn", "x": 28, "y": 1, "target_group": 7, "delay": 0.5 },
+    { "type": "trigger_color", "x": 29, "y": 1, "groups": [7], "channel": "bg", "r": 50, "g": 200, "b": 120, "duration": 0.5 }
+  ]
+}

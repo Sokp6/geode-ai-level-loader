@@ -1,0 +1,54 @@
+{
+  "name": "AI Geometric Odyssey",
+  "author": "Antigravity AI",
+  "description": "Showcase of AI level design with sync and triggers",
+  "speed": "1x",
+  "bg_color": [10, 15, 35],
+  "ground_color": [20, 25, 55],
+  "objects": [
+    { "type": "portal_speed_normal", "x": 0, "y": 1 },
+    
+    { "type": "trigger_color", "x": 2, "y": 1, "channel": "bg", "r": 75, "g": 20, "b": 130, "duration": 1.2 },
+    { "type": "trigger_color", "x": 2, "y": 2, "channel": "g1", "r": 35, "g": 10, "b": 60, "duration": 1.2 },
+
+    { "type": "block", "x": 4, "y": 1 },
+    { "type": "block", "x": 5, "y": 1 },
+    { "type": "block", "x": 6, "y": 1 },
+    { "type": "spike", "x": 7, "y": 1 },
+    { "type": "orb_yellow", "x": 7, "y": 3 },
+    { "type": "block", "x": 8, "y": 1 },
+
+    { "type": "block", "x": 10, "y": 1, "groups": [1] },
+    { "type": "block", "x": 11, "y": 1, "groups": [1] },
+    { "type": "spike", "x": 11, "y": 2, "groups": [1] },
+    
+    { "type": "trigger_move", "x": 6, "y": 2, "target_group": 1, "move_x_blocks": 0, "move_y_blocks": 2, "duration": 0.4, "easing": "bounce_out" },
+    { "type": "trigger_pulse", "x": 6, "y": 3, "target_group": 1, "r": 255, "g": 230, "b": 80, "fade_in": 0.05, "hold": 0.15, "fade_out": 0.25 },
+
+    { "type": "pad_yellow", "x": 12, "y": 1 },
+    { "type": "block", "x": 14, "y": 4 },
+    { "type": "block", "x": 15, "y": 4 },
+    { "type": "spike_hanging", "x": 15, "y": 3 },
+    { "type": "coin", "x": 15, "y": 6 },
+
+    { "type": "trigger_alpha", "x": 13, "y": 2, "target_group": 2, "opacity": 0.0, "duration": 0.0 },
+    { "type": "block", "x": 17, "y": 2, "groups": [2] },
+    { "type": "block", "x": 18, "y": 2, "groups": [2] },
+    { "type": "trigger_alpha", "x": 15, "y": 2, "target_group": 2, "opacity": 1.0, "duration": 0.3 },
+
+    { "type": "trigger_color", "x": 19, "y": 1, "channel": "bg", "r": 20, "g": 90, "b": 110, "duration": 0.8 },
+    { "type": "portal_wave", "x": 20, "y": 3 },
+    { "type": "portal_speed_fast", "x": 20, "y": 2 },
+
+    { "type": "slab", "x": 22, "y": 1 },
+    { "type": "slab", "x": 23, "y": 1 },
+    { "type": "slab", "x": 24, "y": 1 },
+    { "type": "slab", "x": 22, "y": 5 },
+    { "type": "slab", "x": 23, "y": 5 },
+    { "type": "slab", "x": 24, "y": 5 },
+
+    { "type": "trigger_shake", "x": 25, "y": 3, "strength": 3.0, "interval": 0.03, "duration": 0.5 },
+    { "type": "portal_cube", "x": 26, "y": 3 },
+    { "type": "block", "x": 28, "y": 1 }
+  ]
+}
