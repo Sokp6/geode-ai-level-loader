@@ -131,9 +131,9 @@ std::string LevelConverter::getDefaultHeader(const std::string& speed, int bgR, 
 ConversionResult LevelConverter::convertJson(const std::string& jsonContent) {
     ConversionResult result;
     
-    auto parseRes = matjson::parse(jsonContent);
+    auto parseRes = matjson::Value::parse(jsonContent);
     if (!parseRes) {
-        result.errorMessage = "JSON parsing error: " + parseRes.unwrapErr();
+        result.errorMessage = "JSON parsing error";
         return result;
     }
 
@@ -144,24 +144,30 @@ ConversionResult LevelConverter::convertJson(const std::string& jsonContent) {
     }
 
     int bgR = 40, bgG = 125, bgB = 255;
-    if (root.contains("bg_color") && root["bg_color"].isArray() && root["bg_color"].asArray().unwrap().size() >= 3) {
-        auto arr = root["bg_color"].asArray().unwrap();
-        bgR = arr[0].asInt().unwrapOr(40);
-        bgG = arr[1].asInt().unwrapOr(125);
-        bgB = arr[2].asInt().unwrapOr(255);
+    if (root.contains("bg_color") && root["bg_color"].isArray()) {
+        int idx = 0;
+        for (const auto& c : root["bg_color"]) {
+            if (idx == 0) bgR = c.asInt().unwrapOr(40);
+            if (idx == 1) bgG = c.asInt().unwrapOr(125);
+            if (idx == 2) bgB = c.asInt().unwrapOr(255);
+            idx++;
+        }
     }
 
     int gR = 0, gG = 102, gB = 255;
-    if (root.contains("ground_color") && root["ground_color"].isArray() && root["ground_color"].asArray().unwrap().size() >= 3) {
-        auto arr = root["ground_color"].asArray().unwrap();
-        gR = arr[0].asInt().unwrapOr(0);
-        gG = arr[1].asInt().unwrapOr(102);
-        gB = arr[2].asInt().unwrapOr(255);
+    if (root.contains("ground_color") && root["ground_color"].isArray()) {
+        int idx = 0;
+        for (const auto& c : root["ground_color"]) {
+            if (idx == 0) gR = c.asInt().unwrapOr(0);
+            if (idx == 1) gG = c.asInt().unwrapOr(102);
+            if (idx == 2) gB = c.asInt().unwrapOr(255);
+            idx++;
+        }
     }
 
     std::string speed = "1x";
     if (root.contains("speed") && root["speed"].isString()) {
-        speed = root["speed"].asString().unwrap();
+        speed = root["speed"].asString().unwrapOr("1x");
     }
 
     if (!root.contains("objects") || !root["objects"].isArray()) {
@@ -169,17 +175,16 @@ ConversionResult LevelConverter::convertJson(const std::string& jsonContent) {
         return result;
     }
 
-    auto objects = root["objects"].asArray().unwrap();
     std::ostringstream objStream;
 
-    for (const auto& item : objects) {
+    for (const auto& item : root["objects"]) {
         if (!item.isObject()) continue;
 
         int objId = 1;
         if (item.contains("id") && item["id"].isNumber()) {
-            objId = item["id"].asInt().unwrap();
+            objId = item["id"].asInt().unwrapOr(1);
         } else if (item.contains("type") && item["type"].isString()) {
-            objId = getObjectIdByType(item["type"].asString().unwrap());
+            objId = getObjectIdByType(item["type"].asString().unwrapOr("block"));
         }
 
         // Calculate positions
@@ -187,39 +192,41 @@ ConversionResult LevelConverter::convertJson(const std::string& jsonContent) {
         float posY = 15.0f;
 
         if (item.contains("raw_x") && item["raw_x"].isNumber()) {
-            posX = static_cast<float>(item["raw_x"].asDouble().unwrap());
+            posX = static_cast<float>(item["raw_x"].asDouble().unwrapOr(15.0));
         } else if (item.contains("x") && item["x"].isNumber()) {
-            posX = static_cast<float>(item["x"].asDouble().unwrap()) * 30.0f + 15.0f;
+            posX = static_cast<float>(item["x"].asDouble().unwrapOr(0.0)) * 30.0f + 15.0f;
         }
 
         if (item.contains("raw_y") && item["raw_y"].isNumber()) {
-            posY = static_cast<float>(item["raw_y"].asDouble().unwrap());
+            posY = static_cast<float>(item["raw_y"].asDouble().unwrapOr(15.0));
         } else if (item.contains("y") && item["y"].isNumber()) {
-            posY = static_cast<float>(item["y"].asDouble().unwrap()) * 30.0f + 15.0f;
+            posY = static_cast<float>(item["y"].asDouble().unwrapOr(0.0)) * 30.0f + 15.0f;
         }
 
         objStream << "1," << objId << ",2," << posX << ",3," << posY;
 
         // Common properties
         if (item.contains("rotation") && item["rotation"].isNumber()) {
-            objStream << ",6," << item["rotation"].asDouble().unwrap();
+            objStream << ",6," << item["rotation"].asDouble().unwrapOr(0.0);
         }
-        if (item.contains("flip_x") && item["flip_x"].isBool() && item["flip_x"].asBool().unwrap()) {
+        if (item.contains("flip_x") && item["flip_x"].isBool() && item["flip_x"].asBool().unwrapOr(false)) {
             objStream << ",4,1";
         }
-        if (item.contains("flip_y") && item["flip_y"].isBool() && item["flip_y"].asBool().unwrap()) {
+        if (item.contains("flip_y") && item["flip_y"].isBool() && item["flip_y"].asBool().unwrapOr(false)) {
             objStream << ",5,1";
         }
 
         // Groups
         if (item.contains("groups") && item["groups"].isArray()) {
-            auto grps = item["groups"].asArray().unwrap();
-            if (!grps.empty()) {
-                objStream << ",57,";
-                for (size_t g = 0; g < grps.size(); ++g) {
-                    if (g > 0) objStream << ".";
-                    objStream << grps[g].asInt().unwrapOr(0);
+            bool first = true;
+            for (const auto& g : item["groups"]) {
+                if (first) {
+                    objStream << ",57,";
+                    first = false;
+                } else {
+                    objStream << ".";
                 }
+                objStream << g.asInt().unwrapOr(0);
             }
         }
 
@@ -230,24 +237,24 @@ ConversionResult LevelConverter::convertJson(const std::string& jsonContent) {
             
             float moveX = 0.0f;
             if (item.contains("move_x_blocks") && item["move_x_blocks"].isNumber()) {
-                moveX = static_cast<float>(item["move_x_blocks"].asDouble().unwrap()) * 10.0f;
+                moveX = static_cast<float>(item["move_x_blocks"].asDouble().unwrapOr(0.0)) * 10.0f;
             } else if (item.contains("move_x") && item["move_x"].isNumber()) {
-                moveX = static_cast<float>(item["move_x"].asDouble().unwrap());
+                moveX = static_cast<float>(item["move_x"].asDouble().unwrapOr(0.0));
             }
 
             float moveY = 0.0f;
             if (item.contains("move_y_blocks") && item["move_y_blocks"].isNumber()) {
-                moveY = static_cast<float>(item["move_y_blocks"].asDouble().unwrap()) * 10.0f;
+                moveY = static_cast<float>(item["move_y_blocks"].asDouble().unwrapOr(0.0)) * 10.0f;
             } else if (item.contains("move_y") && item["move_y"].isNumber()) {
-                moveY = static_cast<float>(item["move_y"].asDouble().unwrap());
+                moveY = static_cast<float>(item["move_y"].asDouble().unwrapOr(0.0));
             }
 
             int easingId = 0;
             if (item.contains("easing")) {
                 if (item["easing"].isString()) {
-                    easingId = getEasingId(item["easing"].asString().unwrap());
+                    easingId = getEasingId(item["easing"].asString().unwrapOr("none"));
                 } else if (item["easing"].isNumber()) {
-                    easingId = item["easing"].asInt().unwrap();
+                    easingId = item["easing"].asInt().unwrapOr(0);
                 }
             }
             float easingRate = item.contains("easing_rate") ? static_cast<float>(item["easing_rate"].asDouble().unwrapOr(2.0)) : 2.0f;
@@ -260,9 +267,9 @@ ConversionResult LevelConverter::convertJson(const std::string& jsonContent) {
             int channelId = 1000;
             if (item.contains("channel")) {
                 if (item["channel"].isString()) {
-                    channelId = getColorChannelId(item["channel"].asString().unwrap());
+                    channelId = getColorChannelId(item["channel"].asString().unwrapOr("bg"));
                 } else if (item["channel"].isNumber()) {
-                    channelId = item["channel"].asInt().unwrap();
+                    channelId = item["channel"].asInt().unwrapOr(1000);
                 }
             }
 
@@ -281,7 +288,7 @@ ConversionResult LevelConverter::convertJson(const std::string& jsonContent) {
             int targetId = 1000;
             if (item.contains("target_group")) {
                 targetType = 1;
-                targetId = item["target_group"].asInt().unwrap();
+                targetId = item["target_group"].asInt().unwrapOr(1);
             } else if (item.contains("target_type") && item["target_type"].asString().unwrapOr("") == "group") {
                 targetType = 1;
                 targetId = item.contains("target_id") ? item["target_id"].asInt().unwrapOr(1) : 1;
