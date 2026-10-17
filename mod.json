@@ -1,9 +1,9 @@
 {
-	"geode": "5.11.2",
+	"geode": "4.10.2",
 	"gd": {
-		"win": "*",
-		"android": "*",
-		"mac": "*"
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074"
 	},
 	"id": "antigravity.ai_level_loader",
 	"name": "AI Level Loader",
